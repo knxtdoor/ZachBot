@@ -1,5 +1,18 @@
 require("dotenv").config();
 const Discord = require("discord.js");
+const readline = require("readline");
+readline.emitKeypressEvents(process.stdin);
+process.stdin.setRawMode(true);
+
+process.stdin.on("keypress", (str, key) => {
+  if (key.ctrl && key.name === "c") {
+    process.exit();
+  }
+  if (key.name === "r") {
+    process.exit(10);
+  }
+});
+
 const client = new Discord.Client({
   intents: [
     Discord.GatewayIntentBits.Guilds,
@@ -14,10 +27,13 @@ const client = new Discord.Client({
 const Configuration = require("./config.js");
 const Commands = require("./commands.js");
 const Behavior = require("./behavior.js");
+const Economy = require("./economy.js");
+
 const config = Configuration.config;
 
 client.on("ready", () => {
   console.log("Ready!");
+  setInterval(Economy.sync, 60000);
 });
 
 client.on("messageCreate", async (message) => {
@@ -25,9 +41,10 @@ client.on("messageCreate", async (message) => {
     return;
   }
   Behavior.behavior(message);
+  Economy.process(message);
 
   if (message.content.startsWith(config.general.prefix)) {
-    Commands.parse(message);
+    Commands.parse(message, client);
   }
 });
 

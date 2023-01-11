@@ -41,6 +41,7 @@ function generateDefaultConfig() {
     general: {
       botID: "",
       prefix: "!",
+      generalID: "",
     },
     permissions: {
       owner: "",

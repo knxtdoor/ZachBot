@@ -1,10 +1,16 @@
 const permissions = require("./permissions.js");
 const mtg = require("./mtg.js");
 const Configuration = require("./config.js");
-exports.parse = (message) => {
+const imageHandler = require("./image.js");
+
+exports.parse = (message, client) => {
   const command = message.content.substring(1).split(" ");
+  if (commands[command[0]] == undefined) {
+    message.channel.send("unknown command");
+    return;
+  }
   if (permissions.checkPerms(message.member, command[0])) {
-    commands[command[0]](message, command);
+    commands[command[0]](message, command, client);
   } else {
     message.channel.send("You do not have permission to use this command.");
   }
@@ -12,16 +18,19 @@ exports.parse = (message) => {
 
 commands = {
   warn,
+  warm,
   ping,
   bother,
   card,
   reload,
+  image,
+  loseRole,
+  say,
 };
 exports.commands = commands;
 
 function warn(message, args) {
   let mentions = message.mentions.users;
-  console.log(message);
   if (mentions.size != 1) {
     message.channel.send("Improper usage, only mention one user!");
   }
@@ -36,7 +45,9 @@ function warn(message, args) {
   }
   message.channel.send(warnMessage);
 }
-
+function warm(message) {
+  message.channel.send("Learn to spell idiot");
+}
 function ping(message) {
   message.channel.send("pong!");
 }
@@ -68,4 +79,23 @@ function card(message, args) {
 function reload(message) {
   message.channel.send("Reloading config...");
   Configuration.reload();
+}
+function image(message, args) {
+  imageHandler.manip(message, args);
+}
+function loseRole(message, args) {
+  let user = message.mentions.members.at(0);
+  let role = message.mentions.roles.at(0);
+  timeout = () => {
+    user.roles.add(role);
+  };
+  user.roles.remove(role);
+  setTimeout(timeout, 1000 * 60 * 60);
+}
+function say(message, args, client) {
+  const msg = args.slice(1).join(" ");
+  const general = client.channels.cache.get(
+    Configuration.config.general.generalID
+  );
+  general.send(msg);
 }
