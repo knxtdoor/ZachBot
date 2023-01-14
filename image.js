@@ -20,29 +20,59 @@ async function downloadImage(url, filepath) {
 }
 
 exports.manip = async (command, args) => {
-  replyFunc = (fileName) => {
-    command.channel.send(fileName);
+  replyFunc = (inFile, outFile) => {
+    command.channel
+      .send({
+        files: [
+          {
+            attachment: outFile,
+            name: "df.jpg",
+            description: "Deep-fried",
+          },
+        ],
+      })
+      .then(() => {
+        fs.rm(inFile, () => {});
+        fs.rm(outFile, () => {});
+      });
   };
   //let image = command.attachments.find((attach)=>{attach.contentType.includes("image")})
   let url = command.attachments.at(0).url;
   let extension = url.substring(url.lastIndexOf("."), url.length);
-  outFile = OUTPUT_DIR + Date.now() + "in" + extension;
-  await downloadImage(url, outFile);
-  imageCommands[args[1]](outFile, replyFunc, extension);
+  inFile = OUTPUT_DIR + Date.now() + "in" + extension;
+  await downloadImage(url, inFile);
+  imageCommands[args[1]](inFile, replyFunc, extension);
 };
 
 imageCommands = {
   df,
 };
 
-function df(image, reply, extension) {
+function df(inFile, reply, extension) {
   outFile = OUTPUT_DIR + Date.now() + "df" + extension;
   let replyFunc = () => {
-    reply(outFile);
+    reply(inFile, outFile);
   };
-  sharp(image)
-    .modulate({ saturation: 2 })
-    .jpeg({ quality: 1 })
-    .toFile(outFile)
+  const image = sharp(inFile);
+  image
+    .metadata()
+    .then((metadata) => {
+      return image
+        .jpeg({ quality: 1 })
+        .resize({
+          width: Math.trunc(metadata.width * 0.7),
+          height: Math.trunc(metadata.height * 0.7),
+          fit: "inside",
+          kernel: "cubic",
+        })
+        .resize({
+          width: metadata.width,
+          height: metadata.height,
+          fit: "inside",
+          kernel: "lanczos2",
+        })
+        .modulate({ saturation: 5 })
+        .toFile(outFile);
+    })
     .then(replyFunc);
 }
