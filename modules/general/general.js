@@ -1,9 +1,14 @@
-const permissions = require("./permissions.js");
+const permissions = require("../../permissions.js");
 const mtg = require("./mtg.js");
-const Configuration = require("./config.js");
+const Configuration = require("../../config.js");
 const imageHandler = require("./image.js");
 
-exports.parse = (message, client) => {
+exports.name = "general";
+
+exports.process = (message, client) => {
+  if (message.content[0] !== Configuration.config.general.prefix) {
+    return;
+  }
   const command = message.content.substring(1).split(" ");
   if (commands[command[0]] == undefined) {
     message.channel.send("unknown command");

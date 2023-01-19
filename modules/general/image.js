@@ -2,20 +2,24 @@ sharp = require("sharp");
 
 const fs = require("fs");
 const axios = require("axios");
+const { execPath } = require("process");
 
 const OUTPUT_DIR = "./images/";
 
 async function downloadImage(url, filepath) {
-  const response = await axios({
-    url,
-    method: "GET",
-    responseType: "stream",
-  });
   return new Promise((resolve, reject) => {
-    response.data
-      .pipe(fs.createWriteStream(filepath))
-      .on("error", reject)
-      .once("close", () => resolve(filepath));
+    const response = axios({
+      url,
+      method: "GET",
+      responseType: "stream",
+    })
+      .then(() => {
+        response.data
+          .pipe(fs.createWriteStream(filepath))
+          .on("error", reject)
+          .once("close", () => resolve(filepath));
+      })
+      .catch(reject);
   });
 }
 
@@ -37,7 +41,16 @@ exports.manip = async (command, args) => {
       });
   };
   //let image = command.attachments.find((attach)=>{attach.contentType.includes("image")})
-  let url = command.attachments.at(0).url;
+  let url = "";
+  if (command.attachments.size !== 0) {
+    url = command.attachments.at(0).url;
+  } else {
+    let regx =
+      /^((?:https?:)?\/\/)?((?:www|m)\.)? ((?:discord\.gg|discordapp\.com))/g;
+    let cdu = regx.test(command.content.toLowerCase().replace(/\s+/g, ""));
+    console.log(cdu);
+    // url = command.embeds.at(0).image.url;
+  }
   let extension = url.substring(url.lastIndexOf("."), url.length);
   inFile = OUTPUT_DIR + Date.now() + "in" + extension;
   await downloadImage(url, inFile);

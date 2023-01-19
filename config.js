@@ -48,11 +48,25 @@ function generateDefaultConfig() {
       roles: "admin,user",
       roleIDs: "",
     },
+    modules: {},
     commands: {},
   };
-  let commands = Object.keys(require("./commands.js").commands);
+  let modules = getModulesFromDisk();
+  modules.forEach((module) => {
+    config.modules[module] = "false";
+  });
+  let commands = Object.keys(require("./modules/general/general.js").commands);
   commands.forEach((command) => {
     config.commands[command] = { permissions: "admin" };
   });
   return config;
+}
+
+function getModulesFromDisk() {
+  let modules = fs
+    .readdirSync("modules/", { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
+
+  return modules;
 }

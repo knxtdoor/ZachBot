@@ -25,27 +25,26 @@ const client = new Discord.Client({
 });
 
 const Configuration = require("./config.js");
-const Commands = require("./commands.js");
-const Behavior = require("./behavior.js");
-const Economy = require("./economy.js");
-
 const config = Configuration.config;
+let enabledModules = Object.keys(config.modules)
+  .filter((module) => config.modules[module])
+  .map((moduleName) => require(`./modules/${moduleName}/${moduleName}.js`));
 
 client.on("ready", () => {
   console.log("Ready!");
-  setInterval(Economy.sync, 60000);
+  if (enabledModules.some((module) => module.name === "economy")) {
+    setInterval(
+      enabledModules.find((module) => module.name === "economy").sync,
+      60000
+    );
+  }
 });
 
 client.on("messageCreate", async (message) => {
   if (message.author.id == config.general.bot_id) {
     return;
   }
-  Behavior.behavior(message);
-  Economy.process(message);
-
-  if (message.content.startsWith(config.general.prefix)) {
-    Commands.parse(message, client);
-  }
+  enabledModules.forEach((module) => module.process(message, client));
 });
 
 client.login(process.env.CLIENT_TOKEN);
