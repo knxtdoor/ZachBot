@@ -13,7 +13,8 @@ async function downloadImage(url, filepath) {
       method: "GET",
       responseType: "stream",
     })
-      .then(() => {
+      .then((response) => {
+        console.log(filepath);
         response.data
           .pipe(fs.createWriteStream(filepath))
           .on("error", reject)

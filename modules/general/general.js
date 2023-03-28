@@ -17,7 +17,8 @@ exports.process = (message, client) => {
   if (permissions.checkPerms(message.member, command[0])) {
     commands[command[0]](message, command, client);
   } else {
-    message.channel.send("You do not have permission to use this command.");
+    //message.channel.send("You do not have permission to use this command.");
+    doWarn(message.channel,"You do not have permission to use this command",message.author);
   }
 };
 
@@ -34,21 +35,22 @@ commands = {
 };
 exports.commands = commands;
 
+function doWarn(channel,warnMessage, user){
+	if(warnMessage != ""){
+		channel.send(`${user}, you have been warned\n> ${warnMessage}`)
+	}
+	else{
+		channel.send(`${user}, you have been warned`)
+	}
+}
+
+
 function warn(message, args) {
   let mentions = message.mentions.users;
   if (mentions.size != 1) {
     message.channel.send("Improper usage, only mention one user!");
   }
-  let warnMessage;
-  let warned = mentions.at(0);
-  if (args.length == 2) {
-    warnMessage = `${warned}, you have been warned!`;
-  } else {
-    warnMessage = `${warned}, you have been warned\n> ${args
-      .slice(2)
-      .join(" ")}`;
-  }
-  message.channel.send(warnMessage);
+  doWarn(message.channel,args.slice(2).join(" "),mentions.at(0))
 }
 function warm(message) {
   message.channel.send("Learn to spell idiot");
