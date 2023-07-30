@@ -2,7 +2,7 @@ const fs = require("fs");
 
 let econ = readEconomy();
 exports.name = "economy";
-
+exports.config = {};
 exports.process = (message) => {
   user = message.author;
   if (econ[user.id] == undefined) {

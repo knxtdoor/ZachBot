@@ -4,7 +4,7 @@ const Configuration = require("../../config.js");
 const imageHandler = require("./image.js");
 
 exports.name = "general";
-
+exports.config = {};
 exports.process = (message, client) => {
   if (message.content[0] !== Configuration.config.general.prefix) {
     return;
@@ -18,7 +18,11 @@ exports.process = (message, client) => {
     commands[command[0]](message, command, client);
   } else {
     //message.channel.send("You do not have permission to use this command.");
-    doWarn(message.channel,"You do not have permission to use this command",message.author);
+    doWarn(
+      message.channel,
+      "You do not have permission to use this command",
+      message.author
+    );
   }
 };
 
@@ -35,22 +39,20 @@ commands = {
 };
 exports.commands = commands;
 
-function doWarn(channel,warnMessage, user){
-	if(warnMessage != ""){
-		channel.send(`${user}, you have been warned\n> ${warnMessage}`)
-	}
-	else{
-		channel.send(`${user}, you have been warned`)
-	}
+function doWarn(channel, warnMessage, user) {
+  if (warnMessage != "") {
+    channel.send(`${user}, you have been warned\n> ${warnMessage}`);
+  } else {
+    channel.send(`${user}, you have been warned`);
+  }
 }
-
 
 function warn(message, args) {
   let mentions = message.mentions.users;
   if (mentions.size != 1) {
     message.channel.send("Improper usage, only mention one user!");
   }
-  doWarn(message.channel,args.slice(2).join(" "),mentions.at(0))
+  doWarn(message.channel, args.slice(2).join(" "), mentions.at(0));
 }
 function warm(message) {
   message.channel.send("Learn to spell idiot");

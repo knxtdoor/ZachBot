@@ -1,14 +1,13 @@
 const Discord = require("discord.js");
-
+const fs = require("fs");
+const bibleWords = JSON.parse(fs.readFileSync("./modules/behavior/bible.txt"));
 exports.name = "behavior";
-
+exports.config = {};
 exports.process = (message) => {
-  // if (message.content.toLowerCase().search("zachbot") != -1 && message.content.toLowerCase().search("will") != -1) {
-  //     message.channel.send("Happy birthday will");
-  // }
   upvoteDownvote(message);
   tree(message);
   slashS(message);
+  bible(message);
   // punish(message);
 };
 
@@ -57,5 +56,24 @@ function punish(message) {
       }, 5000);
     });
     // console.log();
+  }
+}
+
+function bible(message) {
+  let words = message.content.split(" ");
+  if (words.length < 6) {
+    return;
+  }
+  let numHits = 0;
+  for (const word of words) {
+    if (!bibleWords.includes(word.toLowerCase())) {
+      numHits += 1;
+    }
+  }
+  let hitRate = (numHits * 1.0) / words.length;
+  if (hitRate > 0.75) {
+    message.reply(
+      `${(hitRate * 100).toFixed(2)}% of your message is not in the bible!`
+    );
   }
 }
