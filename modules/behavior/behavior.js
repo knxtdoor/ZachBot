@@ -8,6 +8,7 @@ exports.process = (message) => {
   tree(message);
   slashS(message);
   bible(message);
+  she(message);
   // punish(message);
 };
 
@@ -72,8 +73,29 @@ function bible(message) {
   }
   let hitRate = (numHits * 1.0) / words.length;
   if (hitRate > 0.75) {
+    let hitRatePrint = hitRate * 100;
     message.reply(
-      `${(hitRate * 100).toFixed(2)}% of your message is not in the bible!`
+      `${hitRatePrint.toFixed(2)}% of your message is not in the bible!`
+    );
+  }
+}
+
+function she(message) {
+  let rand = Math.random();
+  if (rand < 0.2) {
+    let words = message.content.split(" ");
+    let longWords = words.filter((word) => word.length > 5);
+    if (longWords.length < 3) {
+      return;
+    }
+    let firstWord = longWords[Math.floor(Math.random() * longWords.length)];
+    longWords = longWords.filter((word) => word != firstWord);
+    let secondWord = longWords[Math.floor(Math.random() * longWords.length)];
+    longWords = longWords.filter((word) => word != secondWord);
+    let thirdWord = longWords[Math.floor(Math.random() * longWords.length)];
+
+    message.channel.send(
+      `She ${firstWord} on my ${secondWord} till I ${thirdWord}`
     );
   }
 }

@@ -2,6 +2,7 @@ const permissions = require("../../permissions.js");
 const mtg = require("./mtg.js");
 const Configuration = require("../../config.js");
 const imageHandler = require("./image.js");
+const { MessageReaction } = require("discord.js");
 
 exports.name = "general";
 exports.config = {};
@@ -36,6 +37,7 @@ commands = {
   image,
   loseRole,
   say,
+  tarot,
 };
 exports.commands = commands;
 
@@ -107,4 +109,32 @@ function say(message, args, client) {
     Configuration.config.general.generalID
   );
   general.send(msg);
+}
+const tarotCards = [
+  "0: The Fool",
+  "I: The Magician",
+  "II: The High Priestess",
+  "III: The Empress",
+  "IV: The Emperor",
+  "V: The Hierophant",
+  "VI: The Lovers",
+  "VII: The Chariot",
+  "VIII: Strength",
+  "IX: The Hermit",
+  "X: Wheel of Fortune",
+  "XI: Justice",
+  "XII: The Hanged Man",
+  "XIII: Death",
+  "XIV: Temperance",
+  "XV: The Devil",
+  "XVI: The Tower",
+  "XVII: The Star",
+  "XVIII: The Moon",
+  "XIX: The Sun",
+  "XX: Judgement",
+  "XXI: The World",
+];
+function tarot(message) {
+  drawnCard = tarotCards[Math.floor(Math.random() * tarotCards.length)];
+  message.reply(`You drew \`${drawnCard}\``);
 }
