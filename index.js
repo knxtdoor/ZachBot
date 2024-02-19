@@ -41,8 +41,8 @@ client.on("ready", () => {
 });
 
 client.on("messageCreate", async (message) => {
-  if (message.author.id == config.general.bot_id) {
-    return;
+  if (message.author.id == config.general.botID) {
+  	return;
   }
   enabledModules.forEach((module) => module.process(message, client));
 });

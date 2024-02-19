@@ -82,20 +82,22 @@ function bible(message) {
 
 function she(message) {
   let rand = Math.random();
-  if (rand < 0.2) {
+  if (rand < .01) {
     let words = message.content.split(" ");
     let longWords = words.filter((word) => word.length > 5);
     if (longWords.length < 3) {
       return;
     }
-    let firstWord = longWords[Math.floor(Math.random() * longWords.length)];
-    longWords = longWords.filter((word) => word != firstWord);
-    let secondWord = longWords[Math.floor(Math.random() * longWords.length)];
-    longWords = longWords.filter((word) => word != secondWord);
-    let thirdWord = longWords[Math.floor(Math.random() * longWords.length)];
+	longWords.sort((a,b)=>Math.random()-.5);
+	let firstWord = removePunctuation(longWords.pop());
+    let secondWord = removePunctuation(longWords.pop());
+    let thirdWord = removePunctuation(longWords.pop());
 
     message.channel.send(
       `She ${firstWord} on my ${secondWord} till I ${thirdWord}`
     );
+  }
+  function removePunctuation(word){
+	return word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/\s{2,}/g," ");
   }
 }

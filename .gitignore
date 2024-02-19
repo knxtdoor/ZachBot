@@ -1,4 +1,4 @@
-# Logs
+# Log
 logs
 *.log
 npm-debug.log*
@@ -107,3 +107,5 @@ dist
 .env
 config.ini
 images/
+*.swp
+modules/**/*.json
