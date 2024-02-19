@@ -79,17 +79,22 @@ async function fetchHimCandidates() {
     ).flat();
 
     const outputObj = { time: new Date(), names: allNames };
-    fs.writeFileSync("./himCandidates.json", JSON.stringify(outputObj));
+    fs.writeFileSync(
+        "./modules/general/himCandidates.json",
+        JSON.stringify(outputObj)
+    );
     console.log("Player data fetched.");
     return outputObj;
 }
 
 async function getHimData() {
-    if (!fs.existsSync("./himCandidates.json")) {
+    if (!fs.existsSync("./modules/general/himCandidates.json")) {
         console.log("No player data found. Retrieving...");
         return await fetchHimCandidates();
     }
-    const data = JSON.parse(fs.readFileSync("./himCandidates.json"));
+    const data = JSON.parse(
+        fs.readFileSync("./modules/general/himCandidates.json")
+    );
     const timeSince = new Date() - new Date(data.time);
     const expired = timeSince / 1000 / 60 >= 10;
     if (expired) {
@@ -107,15 +112,15 @@ async function setHim(himName, message) {
         return;
     }
     const himObj = { name: himName, time: new Date() };
-    fs.writeFileSync("./him.json", JSON.stringify(himObj));
+    fs.writeFileSync("./modules/general/him.json", JSON.stringify(himObj));
     message.reply(`${himName} is Him.`);
 }
 async function getHim(message) {
-    if (!fs.existsSync("./him.json")) {
+    if (!fs.existsSync("./modules/general/him.json")) {
         message.reply("No player is Him.");
         return;
     }
-    const himObj = JSON.parse(fs.readFileSync("./him.json"));
+    const himObj = JSON.parse(fs.readFileSync("./modules/general/him.json"));
     const himDuration = (new Date() - new Date(himObj.time)) / 1000;
     message.reply(
         `${himObj.name} is currently Him. He has been Him for ${himDuration} seconds.`
@@ -174,8 +179,10 @@ async function addPickemGroup(message, args) {
     const eventName = await getEventName(eventID);
     const pickemObj = { eventName, eventID, groupID };
     let groups = [];
-    if (fs.existsSync("./pickemGroups.json")) {
-        groups = JSON.parse(fs.readFileSync("./pickemGroups.json"));
+    if (fs.existsSync("./modules/general/pickemGroups.json")) {
+        groups = JSON.parse(
+            fs.readFileSync("./modules/general/pickemGroups.json")
+        );
     }
     const dupe = groups.some((group) => group.groupID == groupID);
     if (dupe) {
@@ -183,17 +190,22 @@ async function addPickemGroup(message, args) {
         return;
     }
     groups = [...groups, pickemObj];
-    fs.writeFileSync("./pickemGroups.json", JSON.stringify(groups));
+    fs.writeFileSync(
+        "./modules/general/pickemGroups.json",
+        JSON.stringify(groups)
+    );
     message.reply(`Added eventID ${eventID} groupID ${groupID}`);
 }
 async function getPickemScores(message) {
-    if (!fs.existsSync("./pickemGroups.json")) {
+    if (!fs.existsSync("./modules/general/pickemGroups.json")) {
         message.reply(
             "No groups added. Add one with pickem add {eventID} {groupID}"
         );
         return;
     }
-    const pickemGroups = JSON.parse(fs.readFileSync("./pickemGroups.json"));
+    const pickemGroups = JSON.parse(
+        fs.readFileSync("./modules/general/pickemGroups.json")
+    );
     if (pickemGroups == null || pickemGroups.length == 0) {
         message.reply(
             "No groups added. Add one with pickem add {eventID} {groupID}"
