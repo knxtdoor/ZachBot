@@ -9,6 +9,7 @@ exports.process = (message) => {
   slashS(message);
   bible(message);
   she(message);
+  clown(message);
   // punish(message);
 };
 
@@ -100,4 +101,10 @@ function she(message) {
   function removePunctuation(word){
 	return word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/\s{2,}/g," ");
   }
+}
+
+function clown(message){
+	if(message.content.indexOf("behatèd") != -1){
+		message.react("🤡");
+	}
 }
