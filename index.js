@@ -30,8 +30,10 @@ let enabledModules = Object.keys(config.modules)
   .filter((module) => config.modules[module])
   .map((moduleName) => require(`./modules/${moduleName}/${moduleName}.js`));
 
+let typeTimeStamp = 0;
 client.on("ready", () => {
   console.log("Ready!");
+  typeTimeStamp = Date.now();
   if (enabledModules.some((module) => module.name === "economy")) {
     setInterval(
       enabledModules.find((module) => module.name === "economy").sync,
@@ -46,5 +48,23 @@ client.on("messageCreate", async (message) => {
   }
   enabledModules.forEach((module) => module.process(message, client));
 });
+let typeCount = 0;
 
+/*client.on("typingStart", async(channel,user) =>{
+//  if (typing.member.id == "145605533230039040"){
+  console.log("Typing start");
+  if(typing.member.id == "138159506583584768"){
+	console.log("hit");
+  	typeCount++;
+  	typeTimeStamp = Date.now();
+  	if(typeCount == 5){
+		typing.channel.send("Wyatt has started typing 5 times");
+		typeCount = 0;
+  	}
+  }
+  if (typeCount > 0 && Date.now() - typeTimeStamp > 600){
+	typeCount = 0;
+  }
+});
+*/
 client.login(process.env.CLIENT_TOKEN);

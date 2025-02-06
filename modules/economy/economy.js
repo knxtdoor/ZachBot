@@ -14,7 +14,12 @@ exports.process = (message) => {
 exports.sync = syncFile;
 
 function readEconomy() {
-  return JSON.parse(fs.readFileSync("./modules/economy/economy.json"));
+	if(fs.existsSync("./modules/economy/economy.json")){
+		return JSON.parse(fs.readFileSync("./modules/economy/economy.json"));
+	}
+	else{
+		return {};
+	}
 }
 function syncFile() {
   fs.writeFileSync("./modules/economy/economy.json", JSON.stringify(econ));
