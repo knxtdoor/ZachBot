@@ -40,11 +40,17 @@ client.on("ready", () => {
       60000
     );
   }
+  const awbwModule = enabledModules.find(module => module.name == "awbw");
+  if (awbwModule) {
+    awbwModule.initialize(client);
+    setInterval(awbwModule.check, 30000)
+  }
+
 });
 
 client.on("messageCreate", async (message) => {
   if (message.author.id == config.general.botID) {
-  	return;
+    return;
   }
   enabledModules.forEach((module) => module.process(message, client));
 });
@@ -54,16 +60,16 @@ let typeCount = 0;
 //  if (typing.member.id == "145605533230039040"){
   console.log("Typing start");
   if(typing.member.id == "138159506583584768"){
-	console.log("hit");
-  	typeCount++;
-  	typeTimeStamp = Date.now();
-  	if(typeCount == 5){
-		typing.channel.send("Wyatt has started typing 5 times");
-		typeCount = 0;
-  	}
+  console.log("hit");
+    typeCount++;
+    typeTimeStamp = Date.now();
+    if(typeCount == 5){
+    typing.channel.send("Wyatt has started typing 5 times");
+    typeCount = 0;
+    }
   }
   if (typeCount > 0 && Date.now() - typeTimeStamp > 600){
-	typeCount = 0;
+  typeCount = 0;
   }
 });
 */

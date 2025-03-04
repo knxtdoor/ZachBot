@@ -3,6 +3,7 @@ const mtg = require("./mtg.js");
 const vlrHandler = require("./vlr.js");
 const Configuration = require("../../config.js");
 const imageHandler = require("./image.js");
+const awbwHandler = require("../awbw/awbw.js")
 const { MessageReaction } = require("discord.js");
 
 exports.name = "general";
