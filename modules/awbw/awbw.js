@@ -44,7 +44,9 @@ function registerUser(message, args) {
     }
 
     if (Object.values(userMap).some((id) => id == String(message.author.id))) {
-        message.channel.send("You are already associated with another account, unregister first!");
+        message.channel.send(
+            "You are already associated with another account, unregister first!"
+        );
         return;
     }
     userMap[awbwUser] = message.author.id;
@@ -94,10 +96,9 @@ function finishGame(gameId) {
 }
 async function checkTurn(gameId) {
     try {
-        response = (await axios.get(`${gameURL}?games_id=${gameId}`));
+        response = await axios.get(`${gameURL}?games_id=${gameId}`);
         // console.log(response)
-    }
-    catch (e) {
+    } catch (e) {
         console.log("Error retrieving game with id", gameId);
         // console.log("Exception: ", e);
         fs.writeFileSync("./error.log", JSON.stringify(e));
@@ -109,12 +110,14 @@ async function checkTurn(gameId) {
     }
     const data = response.data;
     const gamePage = new JSDOM(data).window.document;
+
     const gameName = gamePage.querySelector(
         ".game-header-header>a"
     ).textContent;
     const turnNum = parseInt(
         gamePage.querySelector(".game-header-info").textContent.split(" ")[1]
     );
+    const gameOver = data.match(/endData.=.({.*})/) != null;
 
     const allPlayersBox = gamePage.querySelector(".game-player-info");
     const playerDetails = [...allPlayersBox.children].map((player) => {
@@ -129,18 +132,17 @@ async function checkTurn(gameId) {
             isEliminated = true;
         }
         if (player.querySelector(".player-info-team")) {
-            const regex = /([a-zA-Z])\.gif/
+            const regex = /([a-zA-Z])\.gif/;
             const teamPic = player.querySelector(".player-info-team>img").src;
-            team = teamPic.match(regex)[1]
-
+            team = teamPic.match(regex)[1];
         }
         return { playerName, isTurn, isEliminated, team };
     });
+
     const alivePlayers = playerDetails.filter((p) => !p.isEliminated);
     const aliveTeams = [...new Set(alivePlayers.map((p) => p.team))];
-    const teamsExist = aliveTeams[0] != null;
-    if (teamsExist && aliveTeams.length == 1) {
-        const playerString = alivePlayers.map((p) => p.playerName).join(", ")
+    if (gameOver) {
+        const playerString = alivePlayers.map((p) => p.playerName).join(", ");
         awChannel.send(
             `Game: ${gameName} (${gameId}) Day ${turnNum}- ${playerString} have won!`
         );
@@ -218,9 +220,10 @@ exports.process = async (message, client) => {
 
 exports.check = () => {
     gameList.forEach((id) => {
-        try { checkTurn(id) }
-        catch (e) {
-            console.log(`Error checking game with id ${id}!`)
+        try {
+            checkTurn(id);
+        } catch (e) {
+            console.log(`Error checking game with id ${id}!`);
             console.log(e);
         }
     });
