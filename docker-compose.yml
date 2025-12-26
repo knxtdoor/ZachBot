@@ -1,0 +1,5 @@
+services:
+  bot:
+    image: zachbot
+    container_name: zachbot
+    restart: unless-stopped
