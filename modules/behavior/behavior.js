@@ -10,6 +10,7 @@ exports.process = (message) => {
   bible(message);
   she(message);
   clown(message);
+  what(message);
   // punish(message);
 };
 
@@ -89,8 +90,8 @@ function she(message) {
     if (longWords.length < 3) {
       return;
     }
-	longWords.sort((a,b)=>Math.random()-.5);
-	let firstWord = removePunctuation(longWords.pop());
+    longWords.sort((a, b) => Math.random() - .5);
+    let firstWord = removePunctuation(longWords.pop());
     let secondWord = removePunctuation(longWords.pop());
     let thirdWord = removePunctuation(longWords.pop());
 
@@ -98,14 +99,21 @@ function she(message) {
       `She ${firstWord} on my ${secondWord} till I ${thirdWord}`
     );
   }
-  function removePunctuation(word){
-	return word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/\s{2,}/g," ");
+  function removePunctuation(word) {
+    return word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").replace(/\s{2,}/g, " ");
   }
 }
 
-function clown(message){
-	if(message.content.indexOf("behatèd") != -1){
-		message.react("🤡");
-	}
+function clown(message) {
+  if (message.content.indexOf("behatèd") != -1) {
+    message.react("🤡");
+  }
+}
+
+function what(message) {
+  let content = message.content.toLowerCase();
+  if (content == "what?" || content == "what?!" || content == "what!?") {
+    message.reply("https://tenor.com/view/pulp-fiction-samuell-jackson-jules-say-what-again-gif-3541290")
+  }
 }
 

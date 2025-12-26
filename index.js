@@ -45,6 +45,10 @@ client.on("ready", () => {
     awbwModule.initialize(client);
     setInterval(awbwModule.check, 30000)
   }
+  const vsModule = enabledModules.find(module => module.name == "vintagestory");
+  if (vsModule) {
+    vsModule.initialize(client);
+  }
 
 });
 
